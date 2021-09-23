@@ -319,6 +319,9 @@ dfF <- 275 - 55 - 3
 # 2. In the lab today we looked to see if there is evidence of a treatment 
 #    effect on depression. Your task is to test for a treatment effect 
 #    on smoking quantity at end of trial.
+#    using the variable called cig_EOT (e.g. )
+#    submit a Word doc and show a written description that answers the question 
+#    and export any plots from R that were used (1 submission per group) 
 
 
 
