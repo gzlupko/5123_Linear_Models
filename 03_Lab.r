@@ -141,7 +141,8 @@ by(data = dat2$cig_base,
 # 4. Explore the treatment effect on depression.
 #######
 # Now switch our attention to the BDI outcome 
-# data at the EOT.
+# data at the end of trial (EOT)
+# this gives us an idea about how the data looks after the treatment 
 
 # Means by group (base R)
 boxplot(bdi_EOT ~ ConditionF, 
@@ -225,12 +226,27 @@ bartlett.test(x = dat2$bdi_EOT,
 # and the second for ordered factors. We will primarily
 # be interested in the first (for unordered factors).
 # The name for dummy coding is "contr.treatment"
+# in this class we only deal with un-ordered categorical factors
 options(contrasts = c("contr.treatment", "contr.poly"))
 lmF_dummy <- lm(formula = bdi_EOT ~ ConditionF,
                 data = dat2)
 summary(lmF_dummy)
 
+# SCB is the reference group; since this is dummy coding, the intercept
+# is the mean of the reference group 
+# to get the predicted values for the other groups, add the estimates
+# to the intercept 
+# to see the predicted values: lmF_dummy$fitted.values 
+# equation is Y-hat = 7.3 + 0.7*D1_i + 3.7*D2_i
+
+
 # Effect coding
+# notice the first label is different in order to get the effect coding scheme 
+# this changes the global options 
+# effect coding uses the last group as the reference group 
+# the intercept is the mean of the group means
+# the estimates in the output represent the individual effect (the deviation)
+# that each group has from the group mean 
 options(contrasts = c("contr.sum", "contr.poly"))
 lmF_effect <- lm(formula = bdi_EOT ~ ConditionF,
                  data = dat2)
@@ -238,6 +254,8 @@ summary(lmF_effect)
 
 # The reduced model is an intercept-only model with
 # no predictor for group (so factor coding doesn't matter).
+# the intercept here represents the overall mean of the data 
+# that is, the overall sample mean 
 lmR <- lm(formula = bdi_EOT ~ 1,
           data = dat2)
 summary(lmR)
