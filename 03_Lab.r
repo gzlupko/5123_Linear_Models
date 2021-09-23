@@ -17,9 +17,13 @@ library(tidyverse)
 # one manually as follows.
 
 # Because the data are in csv format, we will use read_csv()
-dat <- read_csv(file = paste0("/Users/bryankeller/Dropbox",
-                              "/Teaching/Linear Models and Experimental Design",
-                              "/2021 SPRING/00 Syllabus/smokingRCT.csv"))
+#dat <- read_csv(file = paste0("/Users/bryankeller/Dropbox",
+                              #"/Teaching/Linear Models and Experimental Design",
+                              #"/2021 SPRING/00 Syllabus/smokingRCT.csv"))
+
+# import .csv file from my local file 
+dat <- read_csv("smokingRCT.csv") 
+
 names(dat) # What are the names of the data columns?
 dat # View the portion of the data that will fit in your console
 print(dat, n = 20) # print 20 rows
@@ -34,6 +38,7 @@ print(dat, n = 10, width = 10) # print 10 rows and 10 cols
 # -Sex (Sex)
 # -Depression at baseline (bdi_baseline)
 # -Depression at the end of trial (bdi_EOT)
+# -Cigarette usage at baseline and end of trial (eot)
 
 # Let's create a new data set that only has the variables 
 # we are interested in working with
@@ -42,13 +47,14 @@ dat2 <- dat %>%
           cigarettes_day_baseline, bdi_baseline, 
           bdi_EOT, Cigarettes_day_EOT)
 head(dat2)
+str(dat2) 
 # Rename some of the variables to have shorter names
 names(dat2)
 names(dat2)[4] <- "cig_base"
 names(dat2)[5] <- "bdi_base"
 names(dat2)[7] <- "cig_EOT"
 names(dat2)
-head(dat2)
+head(dat2) 
 
 # Create factor versions of categorical variables
 table(dat2$Condition)
@@ -69,14 +75,19 @@ table(dat2$SexF)
 #######
 # 3. Examine balance on baseline variables
 #######
+# this data comes from a randomized experiement
+# if it is randomized, the groups should have balance on any covariate
+# boxplots are great ways to check baseline balanace 
 # Graphically examine the depression scores by
 # group at BASELINE. Is there balance?
+# after depression, check the data for the other covariates to make sure the groups are similar 
 boxplot(bdi_base ~ ConditionF,
         data = dat2,
         xlab = "Experimental Condition",
         ylab = "Beck Depression Score",
         main = "Baseline Balance Plot")
 
+# boxplots show that median and spreads are similar across all three groups 
 # Or in ggplot2, as follows.
 ggplot(data = dat2, mapping = aes(x = ConditionF, y = bdi_base)) + 
    geom_boxplot() + 
@@ -285,7 +296,11 @@ dfF <- 275 - 55 - 3
 #    and state what the evidence says about the success of randomization
 #    in providing balance on this variable.
 
+
+
 # 2. In the lab today we looked to see if there is evidence of a treatment 
 #    effect on depression. Your task is to test for a treatment effect 
 #    on smoking quantity at end of trial.
+
+
 
