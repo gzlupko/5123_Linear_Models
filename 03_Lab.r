@@ -322,6 +322,8 @@ dfF <- 275 - 55 - 3
 #    using the variable called cig_EOT (e.g. )
 #    submit a Word doc and show a written description that answers the question 
 #    and export any plots from R that were used (1 submission per group) 
+#    one recorder per week per lab ... rotate through who writes up and submits 
+#    this is due before 11:59 pm on Wednesday night before next lab
 
 
 
