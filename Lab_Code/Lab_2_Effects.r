@@ -131,8 +131,8 @@ print(dat3, n = 20) # No more missing values.
 # 3b. Effect Size: Strength of Association
 #######
 # R-Squared from ANOVA output
-lm_R <- lm(bdi_EOT ~ 1, data = dat3)
-lm_F <- lm(bdi_EOT ~ ConditionF, data = dat3)
+lm_R <- lm(cig_EOT ~ 1, data = dat3)
+lm_F <- lm(cig_EOT ~ ConditionF, data = dat3)
 anova(lm_R, lm_F)
 
 # lm() will use dummy coding by default 
@@ -153,6 +153,7 @@ lm(bdi_EOT ~ ConditionF, data = dat3) %>% summary()
 
 # Omega squared hat (see formulas on pp. 129)
 (omega_sq_hat <- ((3 - 1)*(3.22 - 1)) / ((3 - 1)*(3.22 - 1) + 220))
+
 
 #######
 # 4. Checking Assumptions - Constant Variance
@@ -205,7 +206,7 @@ boxplot(dat3$bdi_EOT ~ dat3$ConditionF)
 # Practice 2: calculate variance ratios for each pair of
 # groups. With small to moderate sample sizes, ratios larger
 # than 3 or 4 are cause for concern.
-by(data = dat3$bdi_EOT, 
+by(data = dat3$cig_EOT, 
    INDICES = dat3$ConditionF, 
    FUN = var, 
    na.rm = TRUE)
@@ -260,23 +261,29 @@ leveneTest(lm_base)
 # Three recommended practices to check normality.
 # Practice 1: visually assess the via histograms 
 # or boxplots by group.
-ggplot(data = dat3, mapping = aes(x = bdi_EOT)) +
+ggplot(data = dat3, mapping = aes(x = cig_EOT)) +
   geom_histogram(bins = 10, color = "black", fill = "white") + 
-  facet_wrap(~ConditionF)
+  facet_wrap(~ConditionF) + ylab("Cigarettes Per Day") + 
+  xlab("Condition") 
+ggplot(data = dat3, mapping = aes(x = cig_EOT)) +
+  geom_histogram(bins = 20, color = "black", fill = "white") + 
+  facet_wrap(~ConditionF) + ylab("Cigarettes Per Day") + 
+  xlab("Condition") 
+
 
 # You may play with the number of bins 
-ggplot(data = dat3, mapping = aes(x = bdi_EOT)) +
+#ggplot(data = dat3, mapping = aes(x = bdi_EOT)) +
   geom_histogram(bins = 20, color = "black", fill = "white") + 
   facet_wrap(~ConditionF)
-ggplot(data = dat3, mapping = aes(x = bdi_EOT)) +
+#ggplot(data = dat3, mapping = aes(x = bdi_EOT)) +
   geom_histogram(bins = 30, color = "black", fill = "white") + 
   facet_wrap(~ConditionF)
 
 # Boxplots by group are also helpful in visually assessing 
 # skewness and excess kurtosis
-ggplot(data = dat3, mapping = aes(x = ConditionF, y = bdi_EOT)) +
+ggplot(data = dat3, mapping = aes(x = ConditionF, y = cig_EOT)) +
   geom_boxplot(color = "black", fill = "white") + 
-  xlab("Condition") + ylab("EOT Depression")
+  xlab("Condition") + ylab("Cigarettes Per Day")
 
 # Practice 2: create and examine a QQ-plot.
 # A quantile-quantile plot (or QQ plot) is a graphical method 
@@ -294,7 +301,7 @@ qqPlot(lm_F)
 # test. A small p-value represents evidence against the 
 # null hypothesis that the generating distribution is normal.
 ?shapiro.test
-by(data = dat3$bdi_EOT, 
+by(data = dat3$cig_EOT, 
    INDICES = dat3$ConditionF,
    FUN = shapiro.test)
 
@@ -309,21 +316,13 @@ by(data = dat3$bdi_EOT,
 #    the magnitude of the effects based on Cohen’s (1988) guidelines.
 
 
-dat4 <- dat2 %>%
-  select(ConditionF, cig_base, cig_EOT) 
-
-dat4
-
-
-# 
 # 2. Calculate R^2, adjusted R^2, and omega_hat^2 for the cigarette 
 #    outcome. Comment on which you prefer to interpret and why. 
 #    Interpret the version you select in terms of variance explained 
 #    and comment on the magnitude of the effect based on Cohen’s 
 #    (1988) guidelines for R^2, which you may find online.
 
-
-# 
+ 
 # 3. Create boxplots and histograms of the cigarette outcome by
 #    group and comment on the tenability of the assumptions of
 #    constant variance and normality based on the plots.
