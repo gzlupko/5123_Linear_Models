@@ -1,5 +1,5 @@
 # 5123_Linear_Models
-This repository contains shared R code for Group 1 lab assignments, HUDM 5123 Linear Models & Experimental Design, Fall 2021 - 
+This repository contains shared R code for Group 1 lab assignments, HUDM 5123 Linear Models & Experimental Design, Fall 2021. 
 
 
 
