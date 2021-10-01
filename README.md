@@ -4,9 +4,9 @@ This repository contains shared R code for Group 1 lab assignments, HUDM 5123 Li
 
 
 ## Table of Contents 
-* [Course Overview] (#Course Overview) 
+* [Course Overview] (#Course-Overview) 
 * [Labs](#Labs)
-* [Sample Data Visualizations] (#Sample Data Visualizations)
+* [Sample Data Visualizations] (#Sample-Data-Visualizations)
 
 
 ### Course Overview
