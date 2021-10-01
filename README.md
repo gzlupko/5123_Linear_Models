@@ -1,15 +1,18 @@
 # 5123_Linear_Models
-Shared R code for Group 1 lab assignments, HUDM 5123 Linear Models & Experimental Design, Fall 2021 - 
+This repository contains shared R code for Group 1 lab assignments, HUDM 5123 Linear Models & Experimental Design, Fall 2021 - 
 
-This course provides an overview of experimental design and analysis from the perspective of
-the general linear modeling framework. Topics include theory of experimental design, single and multiple factor experiments, between-subject and within-subject designs, factorial and nested designs, random effects, analysis of covariance, and blocking. The course includes lab time devoted to computer applications.
+
 
 ## Table of Contents 
+* [Course Overview] (#Course Overview) 
 * [Labs](#Labs)
 * [Sample Data Visualizations] (#Sample Data Visualizations)
 
 
+### Course Overview
 
+This course provides an overview of experimental design and analysis from the perspective of
+the general linear modeling framework. Topics include theory of experimental design, single and multiple factor experiments, between-subject and within-subject designs, factorial and nested designs, random effects, analysis of covariance, and blocking. The course includes lab time devoted to computer applications.
 
 ### Labs 
 Below are the list of lab assignments and topics covered
