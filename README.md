@@ -18,7 +18,7 @@ the general linear modeling framework. Topics include theory of experimental des
 Below are the list of lab assignments and topics covered
 * Lab 1: Analysis of Variance (ANOVA) using GLM Framework 
 * Lab 2: Measures of Effect, Association, and Assumptions for ANOVA]
-* Lab 3... 
+* Lab 3: Pairwise and Complex Contrasts in One-Way ANOVA
 
 ### Sample Data Visualizations
 
@@ -40,6 +40,9 @@ Normal Q-Q Plot
 
 
 ![alt text](https://github.com/gzlupko/5123_Linear_Models/blob/main/Visualizations/cig_EOT_hist.jpeg) 
+
+
+
 
 
 
