@@ -77,11 +77,11 @@ head(dat2)
 # that the group variances are identical.
 
 # 0. Fit the full and restricted models.
-lmF <- lm(bdi_EOT ~ ConditionF, data = dat2)
-lmR <- lm(bdi_EOT ~ 1, data = dat2)
+lmF <- lm(cig_EOT ~ ConditionF, data = dat2)
+lmR <- lm(cig_EOT ~ 1, data = dat2)
 
 # 1. Compute estimated group variances.
-by(data = dat2$bdi_EOT,
+by(data = dat2$cig_EOT,
    INDICES = dat2$ConditionF,
    FUN = var, na.rm = TRUE)
 
@@ -89,21 +89,21 @@ by(data = dat2$bdi_EOT,
 # Need group sample sizes.
 table(dat2$Condition)
 
-dat3 <- select(dat2, ConditionF, bdi_EOT)
+dat3 <- select(dat2, ConditionF, cig_EOT)
 
 dat3 <- na.omit(dat3) 
 
 table(dat3$ConditionF) 
 
-(mdk_ratio <- (95/46)*(129.2/46.3))
+(mdk_ratio <- (46.16/17.79)*(96/46))
 # Since the value of the ratio is larger than 4, 
 # the rule of thumb suggests heterogeneity of 
 # variance is problematic here.
 
 # 2. Examine the boxplot of outcome by group.
-boxplot(dat2$bdi_EOT ~ dat2$ConditionF,
+boxplot(dat3$cig_EOT ~ dat3$ConditionF,
         xlab = "Condition",
-        ylab = "BDI Score at EOT")
+        ylab = "Cig at EOT")
 
 # 3. Levene's test
 library(car)
@@ -111,7 +111,7 @@ leveneTest(lmF)
 
 # Check the normality assumption. This assumption 
 # asserts that the distribution of the outcome (or, 
-# identicall, the residuals) is normal within each
+# identically, the residuals) is normal within each
 # experimental group and that the residuals, in 
 # aggregate, are normally distributed. We can check 
 # this by making group-specific histograms and by 
@@ -121,21 +121,29 @@ leveneTest(lmF)
 # In base R:
 # Now put all in same plot.
 par(mfrow = c(1, 3))
-hist(dat2$bdi_EOT[which(dat2$ConditionF == "SCBSCT")],
+hist(dat2$cig_EOT[which(dat2ConditionF == "SCBSCT")],
      breaks = 20)
-hist(dat2$bdi_EOT[which(dat2$ConditionF == "SCBSCT-BA")],
+hist(dat2$cig_EOT[which(dat2$ConditionF == "SCBSCT-BA")],
      breaks = 20)
-hist(dat2$bdi_EOT[which(dat2$ConditionF == "WL")],
+hist(dat2$cig_EOT[which(dat2$ConditionF == "WL")],
      breaks = 20)
 par(mfrow = c(1, 1))
 
 # With ggplot2
-ggplot(dat2, aes(x = bdi_EOT)) + 
-   geom_histogram(binds = 20, color = "black", fill = "white") + 
+ggplot(dat2, aes(x = cig_EOT)) + 
+   geom_histogram(bins = 10, color = "black", fill = "white") + 
    facet_wrap(~ConditionF)
 
 # Create a QQ plot using the qqPlot() function in package car.
-qqPlot(lm1)
+qqPlot(lmF)
+
+
+# shapiro wilke test 
+by(dat3$cig_EOT, 
+   INDICES = dat3$ConditionF, 
+   FUN = shapiro.test)   
+
+
 
 # In this case, it seems like both the constant variance
 # and normality assumptions are violated. Recall, that 
@@ -151,7 +159,7 @@ anova(lmR, lmF)
 
 # Can implement the Welch correction by using the 
 # oneway.test function with var.equal = FALSE.
-oneway.test(formula = bdi_EOT ~ ConditionF,
+oneway.test(formula = cig_EOT ~ ConditionF,
             data = dat2, 
             na.action = "na.omit",
             var.equal = FALSE)
@@ -171,22 +179,34 @@ oneway.test(formula = bdi_EOT ~ ConditionF,
 
 # This can be done automatically using the emmeans 
 # package. Install it if you don't have it already.
+# emmeans function wants two arguments - a model and 
+# the specification; 
+# in our case we want the model to be broken out by treatment group 
 library(emmeans)
 emm1 <- emmeans(object = lmF,
                 specs = ~ ConditionF)
-emm1
+emm1 # outputs the means and CI for each mean 
 pairs(emm1, adjust = "none")
+
+# we find that there is a non-sig diff between treatments
+# but there is a sig diff between the treatment groups and the weight list (control)
+
+# caveat here is that the test we ran assumes constant variance across groups
+# caveat is also that we did not correct for multiple testing (which we will cover next week) 
 
 # Let's double check the calculations "by hand" for the
 # second comparison of SCBSCT vs WL.
+mns <- by(dat3$cig_EOT, 
+          INDICES = dat3$ConditionF, 
+          FUN = mean, na.rm = T) 
 (psi_2_hat <- 1*mns[1] + 0*mns[2] - 1*mns[3])
 
 # Get group sample sizes after deleting missing data.
-table(dat2$ConditionF, is.na(dat2$bdi_EOT))
+table(dat2$ConditionF, is.na(dat2$cig_EOT))
 
 # Calculate the F statistic (and t statistic)
 (F_obs <- (psi_2_hat^2 / (1^2/79 + (0)^2/95 + (-1)^2/46)) / 66.35)
-t_obs <- (psi_2_hat / sqrt((1^2/79 + (0)^2/95 + (-1)^2/46))) / sqrt(66.35)
+(t_obs <- (psi_2_hat / sqrt((1^2/79 + (0)^2/95 + (-1)^2/46))) / sqrt(66.35)) 
 
 # Determine the p-value
 (p_valF <- pf(q = F_obs, df1 = 1, df2 = 217, lower.tail = FALSE))
@@ -201,6 +221,8 @@ t_obs <- (psi_2_hat / sqrt((1^2/79 + (0)^2/95 + (-1)^2/46))) / sqrt(66.35)
 # psi4 = 1/2 mu1 + 1/2 mu2 - 1 mu3
 
 # Again, this may be tested automatically in emmeans.
+# use the contrast() function 
+# you input a model and then post the coefficients
 psi4 <- contrast(emm1, 
                  list(psi4 = c(1/2, 1/2, -1)))
 psi4    
@@ -222,17 +244,17 @@ pt(-2.497, df = 217, lower.tail = TRUE)
 #######
 # First, create a smaller data set and eliminate 
 # missing variables.
-dat3 <- select(dat2, bdi_EOT, ConditionF)
+dat3 <- select(dat2, cig_EOT, ConditionF)
 dim(dat3)
 dat3 <- na.omit(dat3)
 dim(dat3)
 # Then use gls() function in package nlme to fit the full model. 
 library(nlme)
-gls1 <- gls(bdi_EOT ~ ConditionF, 
+gls1 <- gls(cig_EOT ~ ConditionF, 
             data = dat3,
             na.action = na.omit, # drop cases with missing values
             weights = varIdent(form = ~1 | ConditionF))
-emm2 <- emmeans(gls1, specs = ~ ConditionF, mode = "sat")
+emm2 <- emmeans(gls1, specs = ~ ConditionF, mode = "sat") # specifies a Satterthwhaite correction 
 emm2
 
 pairs(emm2, adjust = "none")
