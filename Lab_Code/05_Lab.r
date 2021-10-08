@@ -95,6 +95,7 @@ dat3 <- na.omit(dat3)
 
 table(dat3$ConditionF) 
 
+
 (mdk_ratio <- (46.16/17.79)*(96/46))
 # Since the value of the ratio is larger than 4, 
 # the rule of thumb suggests heterogeneity of 
@@ -249,6 +250,7 @@ dim(dat3)
 dat3 <- na.omit(dat3)
 dim(dat3)
 # Then use gls() function in package nlme to fit the full model. 
+
 library(nlme)
 gls1 <- gls(cig_EOT ~ ConditionF, 
             data = dat3,
@@ -258,7 +260,16 @@ emm2 <- emmeans(gls1, specs = ~ ConditionF, mode = "sat") # specifies a Satterth
 emm2
 
 pairs(emm2, adjust = "none")
-contrast(emm2, list(psi4 = c(1/2, 1/2, -1)))
+
+contrast(emm2, list(psi_1 = c(1, -1, 0)))  
+contrast(emm2, list(psi_2 = c(1, 0, -1))) 
+contrast(emm2, list(psi_3 = c(0, 1, -1)))
+
+
+(psi_2_hat <- 1*mns[1] + 0*mns[2] - 1*mns[3])
+
+
+
 
 #######
 # 7. SPSS
