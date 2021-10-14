@@ -20,7 +20,8 @@
 install.packages("haven")
 library(haven)
 dat <- read_dta("~/Dropbox/Teaching/Linear Models and Experimental Design/2021 SPRING/06 Mult Comp/Colombia_Sex_Ed.dta")
-dat <- read_dta(file.choose())
+#dat <- read_dta(file.choose())
+dat <- read_dta("Colombia_Sex_Ed.dta")  
 dim(dat) # 1430 variables!
 
 # There are a lot of variables here. We will only focus on the 
