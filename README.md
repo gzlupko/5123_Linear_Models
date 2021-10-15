@@ -7,7 +7,7 @@ This repository contains shared R code for Group 1 lab assignments, HUDM 5123 Li
 * [Course Overview](#Course-Overview) 
 * [Labs](#Labs)
 * [Sample Data Visualizations](#Sample-Data-Visualizations)
-* [Sample Code](#Sample-Code)
+* [Useful Code](#Useful-Code)
 
 
 ### Course Overview
@@ -48,7 +48,7 @@ Normal Q-Q Plot
 
 
 
-### Sample Code 
+### Useful Code 
 
 ##### Common Functions and Tasks 
 
