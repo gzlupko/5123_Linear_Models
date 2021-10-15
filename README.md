@@ -7,6 +7,7 @@ This repository contains shared R code for Group 1 lab assignments, HUDM 5123 Li
 * [Course Overview](#Course-Overview) 
 * [Labs](#Labs)
 * [Sample Data Visualizations](#Sample-Data-Visualizations)
+* [Sample Code](#Sample-Code)
 
 
 ### Course Overview
@@ -45,5 +46,72 @@ Normal Q-Q Plot
 
 
 
+
+
+### Sample Code 
+
+##### Common Functions and Tasks 
+
+
+###### Create Factors: 
+
+
+```
+dat2$treatmentF <- factor(x = dat2$treatmentstatus, 
+                          levels = c(0, 1, 2),
+                          labels = c("Control", "Spillover", "Treatment"))
+```
+
+##### Checking Assumptions
+
+###### Homoscedasticity of Variance: 
+
+
+```
+# examine variance by group
+(vars_p <- by(data = dat2$r2_know_sexual_violence, 
+            INDICES = dat2$treatmentF,
+            FUN = var, na.rm = TRUE))
+
+# Levene's Test
+library(car)
+leveneTest(r2_know_sexual_violence ~ treatmentF, data = dat2)
+```
+
+
+###### Normality: 
+
+```
+# generate full model and use model in Q-Q Plot
+lmF <- lm(r2_know_sexual_violence ~ treatmentF,
+          data = dat2)
+qqPlot(lmF)
+```
+
+
+
+
+
+
+
+##### Omnibus Test & Pairwise Comparisons 
+
+```
+# Omnibus test of the null with one-way ANOVA 
+lmF <- lm(r2_know_sexual_violence ~ treatmentF,
+          data = dat2)
+
+# Follow up ombnibus with pairwise comparisons
+library(emmeans)
+emm1 <- emmeans(object = lmF,
+                specs = ~ treatmentF)
+
+# for multiple comparisons, control for Type I error rate
+# using relevant correction
+pairs(x = emm1, 
+      adjust = "Tukey")              
+                
+
+```
 
 
