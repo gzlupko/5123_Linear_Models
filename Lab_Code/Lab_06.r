@@ -207,6 +207,7 @@ pairs(x = emm1,
                        # multiple comparisons.
 pairs(x = emm1, 
       adjust = "Tukey")  # Tukey-adjusted. Ok to interpret.
+
 pairs(x = emm1, 
       adjust = "Bonferroni")  # Bonferroni-adjusted. Ok to interpret.
 pairs(x = emm1, 
