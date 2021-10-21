@@ -186,7 +186,7 @@ leveneTest(bdi_EOT ~ ConditionF*collegeF, data = dat2)
 # we will examine the QQplot after fitting the full regression model.
 # Set deviation coding as default.
 options(contrasts = c("contr.sum", "contr.poly"))
-lm1 <- lm(bdi_EOT ~ ConditionF + marriedF + ConditionF:marriedF, data = dat2)
+lm1 <- lm(bdi_EOT ~ ConditionF*collegeF, data = dat2)
 
 # the notation below is another way to use the lm() function which
 # multiples your two factors (as an interaction) but this will also
@@ -197,27 +197,31 @@ summary(lm1)
 library(car) 
 qqPlot(lm1)
 
+dat2
+
 # There are some severe departures from normality at the tails and
 # in the center. The assumption appears untenable here. Let's examine
 # histograms of the outcome by group.
+
+hist(bdi_EOT[which()])
 par(mfrow = c(2,3)) # Multiple plots per window
 with(data = dat2,
-     expr = hist(bdi_EOT[which(ConditionF == "SCBSCT" & marriedF == "married")],
+     expr = hist(bdi_EOT[which(ConditionF == "SCBSCT" & collegeF == "married")],
                  breaks = seq(0, 65, 5), main = "SCBSCT:married", xlab = "BDI"))
 with(data = dat2,
-     expr = hist(bdi_EOT[which(ConditionF == "SCBSCT-BA" & marriedF == "married")],
+     expr = hist(bdi_EOT[which(ConditionF == "SCBSCT-BA" & collegeF == "married")],
                  breaks = seq(0, 65, 5), main = "SCBSCT-BA:married", xlab = "BDI"))
 with(data = dat2,
-     expr = hist(bdi_EOT[which(ConditionF == "WL" & marriedF == "married")],
+     expr = hist(bdi_EOT[which(ConditionF == "WL" & collegeF == "married")],
                  breaks = seq(0, 65, 5), main = "WL:married", xlab = "BDI"))
 with(data = dat2,
-     expr = hist(bdi_EOT[which(ConditionF == "SCBSCT" & marriedF == "not married")],
+     expr = hist(bdi_EOT[which(ConditionF == "SCBSCT" & collegeF == "not married")],
                  breaks = seq(0, 65, 5), main = "SCBSCT:not", xlab = "BDI"))
 with(data = dat2,
-     expr = hist(bdi_EOT[which(ConditionF == "SCBSCT-BA" & marriedF == "not married")],
+     expr = hist(bdi_EOT[which(ConditionF == "SCBSCT-BA" & collegeF == "not married")],
                  breaks = seq(0, 65, 5), main = "SCBSCT-BA:not", xlab = "BDI"))
 with(data = dat2,
-     expr = hist(bdi_EOT[which(ConditionF == "WL" & marriedF == "not married")],
+     expr = hist(bdi_EOT[which(ConditionF == "WL" & collegeF == "not married")],
                  breaks = seq(0, 65, 5), main = "WL:not", xlab = "BDI"))
 par(mfrow = c(1,1)) # Back to one plot per window
 
@@ -233,47 +237,49 @@ dat2$bdi_EOT_trans <- log(dat2$bdi_EOT + .5)
 # Let's examine histograms of the transformed variable.
 par(mfrow = c(2,3)) # Multiple plots per window
 with(data = dat2,
-     expr = hist(bdi_EOT_trans[which(ConditionF == "SCBSCT" & marriedF == "married")],
-                 breaks = seq(-1, 5, .25), main = "SCBSCT:married", xlab = "BDI"))
+     expr = hist(bdi_EOT_trans[which(ConditionF == "SCBSCT" & collegeF == "college")],
+                 breaks = seq(-1, 5, .25), main = "SCBSCT:college", xlab = "BDI"))
 with(data = dat2,
-     expr = hist(bdi_EOT_trans[which(ConditionF == "SCBSCT-BA" & marriedF == "married")],
-                 breaks = seq(-1, 5, .25), main = "SCBSCT-BA:married", xlab = "BDI"))
+     expr = hist(bdi_EOT_trans[which(ConditionF == "SCBSCT-BA" & collegeF == "college")],
+                 breaks = seq(-1, 5, .25), main = "SCBSCT-BA:college", xlab = "BDI"))
 with(data = dat2,
-     expr = hist(bdi_EOT_trans[which(ConditionF == "WL" & marriedF == "married")],
-                 breaks = seq(-1, 5, .25), main = "WL:married", xlab = "BDI"))
+     expr = hist(bdi_EOT_trans[which(ConditionF == "WL" & collegeF == "college")],
+                 breaks = seq(-1, 5, .25), main = "WL:college", xlab = "BDI"))
 with(data = dat2,
-     expr = hist(bdi_EOT_trans[which(ConditionF == "SCBSCT" & marriedF == "not married")],
-                 breaks = seq(-1, 5, .25), main = "SCBSCT:not", xlab = "BDI"))
+     expr = hist(bdi_EOT_trans[which(ConditionF == "SCBSCT" & collegeF == "not college")],
+                 breaks = seq(-1, 5, .25), main = "SCBSCT:not college", xlab = "BDI"))
 with(data = dat2,
-     expr = hist(bdi_EOT_trans[which(ConditionF == "SCBSCT-BA" & marriedF == "not married")],
-                 breaks = seq(-1, 5, .25), main = "SCBSCT-BA:not", xlab = "BDI"))
+     expr = hist(bdi_EOT_trans[which(ConditionF == "SCBSCT-BA" & collegeF == "not college")],
+                 breaks = seq(-1, 5, .25), main = "SCBSCT-BA:not college", xlab = "BDI"))
 with(data = dat2,
-     expr = hist(bdi_EOT_trans[which(ConditionF == "WL" & marriedF == "not married")],
-                 breaks = seq(-1, 5, .25), main = "WL:not", xlab = "BDI"))
+     expr = hist(bdi_EOT_trans[which(ConditionF == "WL" & collegeF == "not college")],
+                 breaks = seq(-1, 5, .25), main = "WL:not college", xlab = "BDI"))
 par(mfrow = c(1,1)) # Back to one plot per window
 
 # Looks much better; let's try again using the transformed variable.
-lm2 <- lm(bdi_EOT_trans ~ ConditionF * marriedF, data = dat2)
+lm2 <- lm(bdi_EOT_trans ~ ConditionF * collegeF, data = dat2)
 qqPlot(lm2) # The assumption now looks tenable.
 
 # It sometimes happens that resolving one assumption via transformation can'
 # help with another assumption. Let's re-check the constant variance 
 # assumption with the transformed outcome.
-boxplot(bdi_EOT_trans ~ ConditionF:marriedF, data = dat2)
+boxplot(bdi_EOT_trans ~ ConditionF:collegeF, data = dat2)
 by(data = dat2$bdi_EOT_trans, 
-   INDICES = list(dat2$ConditionF, dat2$marriedF),
+   INDICES = list(dat2$ConditionF, dat2$collegeF),
    FUN = var, na.rm = TRUE)
 (59/27)*(1.34/.67) # 4.37 much better than 10
-leveneTest(bdi_EOT_trans ~ ConditionF:marriedF, data = dat2)
+leveneTest(bdi_EOT_trans ~ ConditionF:collegeF, data = dat2)
+
+table(dat2$ConditionF, dat2$collegeF) 
 
 # Constant variance assumption is now tenable as well.
 # Let's examine the interaction plot. We can do this 
 # in package emmeans after creating an emmeans object.
 library(emmeans)
 emm1 <- emmeans(object = lm2, 
-                specs = ~ ConditionF:marriedF)
+                specs = ~ ConditionF:collegeF)
 emmip(object = emm1, # emmip stands for EMMeans Interaction Plot
-      formula = marriedF ~ ConditionF, # the formula is trace factor ~ x factor 
+      formula = collegeF ~ ConditionF, # the formula is trace factor ~ x factor 
       CIs = TRUE) # add 95% CIs to the means
 
 # Doesn't look like there is any evidence of a signifcant interaction 
@@ -302,8 +308,21 @@ Anova(lm1, type = 3)
 # partial eta is the sum. square for a given effect = (SSforgiven effect)/(SSwithin + SSfor given effect)
 
 (eta_sq_partial_Condition <- 2.55/(177.46 + 2.55)) #0.014 a small R^2 for Condition 
-(eta_sq_partial_Married <- 0.4/(177.46 + 0.4)) # 0.002 for Married 
+(eta_sq_partial_CollegeF <- 0.4/(177.46 + 0.4)) # 0.002 for Married 
 (eta_sq_partial_CxM <- 0.35/(177.46 + 0.35)) #0.002 for interaction 
+
+
+
+Anova(lm1, type = 3) 
+
+(eta_sq_partial_Condition <- 325.6/(325.6 + 14184.0)) #0.022 a small R^2 for Condition 
+(eta_sq_partial_CollegeF <- 59.4/(59.4 + 14184.0)) # 0.004 for college
+(eta_sq_partial_CxM <- 202.3/(202.3 + 14184.0)) #0.014 for college x treatment interaction 
+
+
+# alternative function for eta-squared 
+library(lsr)
+etaSquared(lm1)
 
 
 #######
