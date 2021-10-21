@@ -8,9 +8,12 @@
 # in your plotting window pane in RStudio. Or, it can be
 # one manually as follows, though, on your machine you 
 # would need to enter the correct file path.
-dat <- read.csv(file = paste0("/Users/bryankeller/Dropbox",
+#dat <- read.csv(file = paste0("/Users/bryankeller/Dropbox",
                               "/Teaching/Linear Models and Experimental Design",
                               "/2021 SPRING/00 Syllabus/smokingRCT.csv"))
+library(tidyverse) 
+dat <- read_csv("smokingRCT.csv") 
+
 names(dat)
 
 #######
@@ -149,21 +152,21 @@ dat2[which(dat2$ConditionF == "WL"),]
 
 # 1. Begin with boxplots.
 par(mar = c(11, 4, 4, 2) + .1)
-boxplot(bdi_EOT ~ ConditionF:marriedF, data = dat2, las = 2, 
+boxplot(bdi_EOT ~ ConditionF:collegeF, data = dat2, las = 2, 
         xlab = "", main = "Boxplots of BDI at EOT by Group",
         ylab = "BDI Score")
 # 2. Next, calculate sample variances and rule of thumb ratio.
 by(data = dat2$bdi_EOT, 
-   INDICES = list(dat2$ConditionF, dat2$marriedF),
+   INDICES = list(dat2$ConditionF, dat2$collegeF),
    FUN = var, na.rm = TRUE)
 #    Need group sample sizes for this as well.
-table(dat2$marriedF, dat2$ConditionF)
+table(dat2$collegeF, dat2$ConditionF)
 # Largest to smallest ratio:
 (59/27)*(198.7/42.5) # 10.2 is large
 # 3. Run a statistical test of the null hypothesis of equal 
 #    group variances (e.g., Levene's test).
 library(car)
-leveneTest(bdi_EOT ~ ConditionF*marriedF, data = dat2)
+leveneTest(bdi_EOT ~ ConditionF*collegeF, data = dat2)
 
 # The WL control group sample sizes are about half as large
 # as the other groups, and the variances associated with the 
@@ -184,6 +187,11 @@ leveneTest(bdi_EOT ~ ConditionF*marriedF, data = dat2)
 # Set deviation coding as default.
 options(contrasts = c("contr.sum", "contr.poly"))
 lm1 <- lm(bdi_EOT ~ ConditionF + marriedF + ConditionF:marriedF, data = dat2)
+
+# the notation below is another way to use the lm() function which
+# multiples your two factors (as an interaction) but this will also
+# give us our main effects 
+#lm1 <- lm(bdi_EOT ~ ConditionF*marriedF, data = dat2) 
 summary(lm1)
 
 library(car) 
@@ -284,6 +292,19 @@ Anova(lm2, type = 3)
 # So what would have happened had we not transformed the outcome
 # variable (i.e., if we had used lm1 instead of lm2)?
 Anova(lm1, type = 3)
+
+
+
+
+# calculate partial eta^2 values 
+# these are essentially R^2 values 
+# we can get partial eta square values from the ANOVA output 
+# partial eta is the sum. square for a given effect = (SSforgiven effect)/(SSwithin + SSfor given effect)
+
+(eta_sq_partial_Condition <- 2.55/(177.46 + 2.55)) #0.014 a small R^2 for Condition 
+(eta_sq_partial_Married <- 0.4/(177.46 + 0.4)) # 0.002 for Married 
+(eta_sq_partial_CxM <- 0.35/(177.46 + 0.35)) #0.002 for interaction 
+
 
 #######
 # 3. Two-Way Analysis with work status
