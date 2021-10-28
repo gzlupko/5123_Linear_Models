@@ -229,6 +229,7 @@ emmip(object = emm1, formula = ConditionF ~ workingF, CIs = TRUE)
 
 # 1. Analyze simple effects of condition at 2 levels of working status.
 #    There are two one-way omnibus tests of condition (three levels).
+# conditions on working condition to exam levels of treatment by the working status 
 (jt1 <- joint_tests(object = emm1, by = "workingF"))
 
 # Multiple p-values by 2 to make a Bonferroni correction.
@@ -274,3 +275,13 @@ pairs(x = emm4,
 #######
 # No lab due; study for exam or work on finding a data set for 
 # your project.
+
+
+
+# simple vs. complex contrast 
+
+emm4
+# 1 , -0.5, -0.5 ; to contrast WL with CBT and BA
+
+psi <- constrast(emm4, 
+                 list(psa = c(1, -.5, -.5, -1, .5, .5)))
