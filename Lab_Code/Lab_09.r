@@ -165,8 +165,10 @@ pairs(emm2)
 # Consider controlling for baseline level of severity 
 # (pk1) as a covariate. First check for a strong linear 
 # relationship with the outcome, pk5.
-cor(acupuncture$pk1, acupuncture$pk5)
-plot(x = acupuncture$pk1, y = acupuncture$pk5)
+cor(acupuncture$chronicity, acupuncture$pk5)
+cor(acupuncture$chronicity, acupuncture$g)
+plot(x = acupuncture$chronicity, y = acupuncture$pk5, 
+     xlab = )
 
 # The test of the slope coefficient from a regression 
 # of pk5 on pk1 will test if the linear relationship 
@@ -179,7 +181,7 @@ summary(lm_slope)
 # between treatment group and the covariate. This can be 
 # tested by running the full model that includes the 
 # interaction term.
-lm2 <- lm(pk5 ~ group + pk1 + group:pk1,
+lm2 <- lm(pk5 ~ group + chronicity + group:pk1,
           data = acupuncture)
 Anova(lm2, type = 3)
 
@@ -244,7 +246,7 @@ summary(grid1)
 pairs(grid1)
 
 # This can be seen clearly from the plot based on lm3.
-plot(pk5 ~ pk1,
+plot(pk5 ~ chonricit,
      data = acupuncture, 
      xlab = "Baseline Severity Rating (pk1)",
      ylab = "1 Year Severity Rating (pk5)",
