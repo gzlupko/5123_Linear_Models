@@ -45,6 +45,11 @@ Normal Q-Q Plot
 
 
 
+**Interaction Plot with Effect Heterogeneity** - The interaction plot below shows that different treatments have differential effects on a given outcome variable based on individual's working status. In particular, this plot shows that treatment has a differential effect on the outcome for individuals that are not working, whereas the effect of treatment is not differential for individuals that are working.
+
+![alt text](https://github.com/gzlupko/5123_Linear_Models/blob/main/Visualizations/effect_heterogeneity_example.jpeg) 
+
+
 
 
 
