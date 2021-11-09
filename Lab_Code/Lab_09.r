@@ -167,8 +167,7 @@ pairs(emm2)
 # relationship with the outcome, pk5.
 cor(acupuncture$chronicity, acupuncture$pk5)
 cor(acupuncture$chronicity, acupuncture$g)
-plot(x = acupuncture$chronicity, y = acupuncture$pk5, 
-     xlab = )
+plot(x = acupuncture$chronicity, y = acupuncture$pk5) 
 
 # The test of the slope coefficient from a regression 
 # of pk5 on pk1 will test if the linear relationship 
@@ -184,6 +183,16 @@ summary(lm_slope)
 lm2 <- lm(pk5 ~ group + chronicity + group:pk1,
           data = acupuncture)
 Anova(lm2, type = 3)
+
+
+lm2 <- lm(pk5 ~ group + log(chronicity) + group:pk1,
+          data = acupuncture)
+
+
+acupuncture$log_chron <- log(acupuncture$chronicity + 1) 
+acupuncture$log_chron
+
+
 
 # The interaction is significant (p = .0017), which violates the 
 # assumption of no treatment by covariate interaction
@@ -246,7 +255,7 @@ summary(grid1)
 pairs(grid1)
 
 # This can be seen clearly from the plot based on lm3.
-plot(pk5 ~ chonricit,
+plot(log(pk5) ~ chroncity,
      data = acupuncture, 
      xlab = "Baseline Severity Rating (pk1)",
      ylab = "1 Year Severity Rating (pk5)",
@@ -263,6 +272,12 @@ summary(lm3)
 abline(a = 1.16, b = .71, col = 1, lwd = 2)
 # Treated: pk5 = 1.16 - 2.29 + .71*pk1 = -1.13 + .71*pk1
 abline(a = -1.13, b = .71, col = 2, lwd = 2, lty = 2)
+
+
+ggplot(data = acupuncture, aes(x = chronicity, y = pk5)) + geom_point() +
+  abline() 
+
+
 
 # More on handling the treatment by covariate interaction next time
 
