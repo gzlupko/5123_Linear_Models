@@ -5,24 +5,20 @@ date: "11/11/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
+```{r Setup, include=FALSE}
 library(tidyverse) 
 library(haven) 
-setwd("~/Desktop/5123 Linear Models/Data Analysis Project/Potential Data Sets/Online Learning") 
+setwd("/Users/gianzlupko/Desktop/5123 Linear Models/5123_Linear_Models/Online_Learning_Study")   
 ```
 
-
-```{r}
+Import data and view fields
+```{r Import-Data}
 learning <- read_dta("online_assessment.dta") 
 head(learning) 
 ```
 
 
-
-
-
-
-```{r}
+```{r Data-Cleaning}
 
 # filter data set for only those that completed the course 
 completed <- learning %>%
@@ -32,12 +28,10 @@ completed <- learning %>%
 ```
 
 
-
-
 Test for covariate suitability 
 
 Is GPA an appropriate covariate to be used in ANCOVA? 
-```{r}
+```{r Covariate-Test}
 
 cor(completed$gpa, completed$falsexam)
 
