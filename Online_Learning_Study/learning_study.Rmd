@@ -1,0 +1,53 @@
+---
+title: "learning_type_study"
+author: "Gian Zlupko"
+date: "11/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse) 
+library(haven) 
+setwd("~/Desktop/5123 Linear Models/Data Analysis Project/Potential Data Sets/Online Learning") 
+```
+
+
+```{r}
+learning <- read_dta("online_assessment.dta") 
+head(learning) 
+```
+
+
+
+
+
+
+```{r}
+
+# filter data set for only those that completed the course 
+completed <- learning %>%
+  filter(!falsexam == 0 & !is.na(gpa)) 
+
+
+```
+
+
+
+
+Test for covariate suitability 
+
+Is GPA an appropriate covariate to be used in ANCOVA? 
+```{r}
+
+cor(completed$gpa, completed$falsexam)
+
+lm(falsexam ~ gpa, data = completed) %>%
+  summary()
+
+ggplot(data = completed, aes(x = gpa, y = falsexam)) + geom_point() 
+```
+
+
+
+
+
