@@ -278,6 +278,66 @@ ggplot(data = acupuncture, aes(x = chronicity, y = pk5)) + geom_point() +
   abline() 
 
 
+lm2 <- lm(pk5 ~ group + pk1 + group:pk1, 
+          data = acupuncture)
+
+summary(lm2) 
+
+
+ggplot(data = acupuncture, aes(x = pk1, y = pk5, color = group)) + 
+  geom_point(alpha = 0.8) 
+
+# regression equation
+
+# y = beta + beta*group + beta*pk1 + beta_group:pk1
+
+#prediction equation (uses model estimates for beta based on model output line 284)
+# y_hat = 0.39 _ 1.92*group_i + 0.82*pk1 + 0.25*group + 
+
+
+# plot showing different regression lines
+plot(pk5 ~ pk1, data = acupuncture, col = c("burlywood", "blueviolet")) 
+abline(a = 2.31, b = 0.57, col = "burlywood", lwd = 2) 
+abline(a = .39, b = 0.82, col = "blueviolet", lwd = 2)
+
+
+
+# sample plot in ggplot2() 
+p <- ggplot(data = acupuncture, (aes(x=pk1, y=pk5, color=group))) + 
+  theme_classic() +ylab("1 Year Severity Post-Test") + xlab("Baseline Serverity Rating")
+
+p + geom_point() + geom_smooth(method=lm, se=FALSE, fullrange=TRUE)
+
+p + geom_point() + geom_smooth(method = lm, se = FALSE) 
+
+
+
+
+library(emmeans) 
+
+
+emm5 <- emmeans(lm2, ~ group:pk1) 
+emm5
+
+
+###### ANCOHET
+#two-way interaction beween group and baseline
+# severity rating
+# with ANCOVA, assumes no interaction between covariate and treatment (null)
+# if you find significatn interaction, shows that slopes of regression lines 
+# within two groups will not be the same; one of assumptions is violated that slopes are 
+# identical across pre-test and post test (with main effect for treatment) 
+
+
+
+
+
+
+
+
+
+
+
 
 # More on handling the treatment by covariate interaction next time
 
