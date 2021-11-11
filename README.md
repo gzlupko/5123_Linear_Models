@@ -50,7 +50,7 @@ Normal Q-Q Plot
 ![alt text](https://github.com/gzlupko/5123_Linear_Models/blob/main/Visualizations/effect_heterogeneity_example.jpeg) 
 
 
-
+![alt text](https://github.com/gzlupko/5123_Linear_Models/blob/main/Visualizations/interaction_different_slopes.jpeg)
 
 
 ### Useful Code 
