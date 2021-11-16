@@ -39,6 +39,8 @@ lm(falsexam ~ gpa, data = completed) %>%
   summary()
 
 ggplot(data = completed, aes(x = gpa, y = falsexam)) + geom_point() 
+
+# test commit 
 ```
 
 
