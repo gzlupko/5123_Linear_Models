@@ -8,6 +8,7 @@ output: html_document
 ```{r Setup, include=FALSE}
 library(tidyverse) 
 library(haven) 
+library(psych) 
 setwd("/Users/gianzlupko/Desktop/5123 Linear Models/5123_Linear_Models/Online_Learning_Study")   
 ```
 
@@ -19,6 +20,77 @@ head(learning)
 
 
 ```{r Data-Cleaning}
+
+# rename columns
+
+learn2 <- learning %>%
+  rename(course_grade = falsexam) 
+
+# create column that stores character string identifying course type: 
+learn2
+learn2 <- learn2 %>%
+  mutate(format_type = 
+           ifelse(format_ol == 1, "online", 
+                  ifelse(format_blended == 1, "hybrid", 
+                         ifelse(format_ol == 0 & format_blended == 0, 
+                                "traditional", "NA")))) 
+
+```
+
+
+
+A review of missing data
+```{r Missing-Data}
+
+# attrition by instructional mode: 
+# note, Alpert et al. (2016) coded drop out data 
+# 1 = students given permission at outset of semester but did not sign up
+# 2 = students who did enroll that later dropped out
+# 3 = students who completed the course 
+
+attrition <- learn2 %>%
+  group_by(enroll_count) %>%
+  select(format_type, enroll_count) %>%
+  table() %>%
+  data.frame()
+
+#write.csv(attrition, "attrition_by_condition.csv") 
+online_attrition = (29 + 50)
+online_attrition/172
+
+# store new data with only those who completed the course 
+
+completed_course <- learn2 %>%
+  filter(enroll_count == 3) 
+
+# check missigness of GPA (covariate): 
+# for those that completed coourse, 48 GPA records missing total
+completed_course %>%
+  select(format_type, gpa) %>%
+  group_by(format_type) %>%
+  filter(is.na(gpa)) %>%
+  count(format_type)
+
+
+# check missingness of final grade (DV): 
+# no missing grades; DV accounted for. 
+
+completed_course %>%
+  select(format_type, course_grade) %>%
+  group_by(format_type)
+
+  
+  
+
+```
+
+
+
+
+
+
+
+```{r Data-Cleaning2}
 
 # filter data set for only those that completed the course 
 completed <- learning %>%
