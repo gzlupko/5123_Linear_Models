@@ -3,6 +3,7 @@ This folder contains materials used for a replication study of Alpert et al. (20
 ## Table of Contents 
 * [Project Overview](#Project-Overview) 
 * [Sample Data Visualizations](#Sample-Visualizations)
+* [Sample Data Tables](#Sample-Data-Tables)
 
 
 
@@ -31,5 +32,5 @@ Data visualizations associated with this project can be found in the Project_Vis
 ![alt text](https://github.com/gzlupko/5123_Linear_Models/blob/main/Online_Learning_Study/project_visualizations/course_grade_histogram.jpeg)
 
 
-
+### Sample Data Tables
 
