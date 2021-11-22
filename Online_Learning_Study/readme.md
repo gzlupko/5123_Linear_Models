@@ -3,6 +3,7 @@ This folder contains materials used for a replication study of Alpert et al. (20
 ## Table of Contents 
 * [Project Overview](#Project-Overview) 
 * [Sample Data Visualizations](#Sample-Visualizations)
+* [Sample Data Tables](#Sample-Data-Tables)
 
 
 
@@ -17,4 +18,19 @@ The data presented in this proposal were originally published in A Randomized As
 
 Data visualizations associated with this project can be found in the Project_Visualizations folder. Below are sample visualizations taken from exploratory data analysis methods used to test assumptions for statistical modeling.
 
+
+
+#### Boxplot of Final Course Grades by Group
+![alt text](https://github.com/gzlupko/5123_Linear_Models/blob/main/Online_Learning_Study/project_visualizations/boxplot1_final_grades.jpeg) 
+
+#### "Joy" Plot of GPA Distributions by Group
+![alt text](https://github.com/gzlupko/5123_Linear_Models/blob/main/Online_Learning_Study/project_visualizations/gpa_distributions.jpeg)
+
+
+
+#### "Historgrams of Final Grade by Group
+![alt text](https://github.com/gzlupko/5123_Linear_Models/blob/main/Online_Learning_Study/project_visualizations/course_grade_histogram.jpeg)
+
+
+### Sample Data Tables
 
