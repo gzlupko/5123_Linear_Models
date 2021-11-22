@@ -9,6 +9,8 @@ output: html_document
 library(tidyverse) 
 library(haven) 
 library(psych) 
+library(ggridges) 
+library(car)
 setwd("/Users/gianzlupko/Desktop/5123 Linear Models/5123_Linear_Models/Online_Learning_Study")   
 ```
 
@@ -34,6 +36,12 @@ learn2 <- learn2 %>%
                   ifelse(format_blended == 1, "hybrid", 
                          ifelse(format_ol == 0 & format_blended == 0, 
                                 "traditional", "NA")))) 
+
+
+# store format type as factor: 
+class(learn2$format_type) 
+learn2$format_type <- as.factor(learn2$format_type) 
+levels(learn2$format_type) 
 
 ```
 
@@ -65,12 +73,13 @@ completed_course <- learn2 %>%
 
 # check missigness of GPA (covariate): 
 # for those that completed coourse, 48 GPA records missing total
-completed_course %>%
+gpa_missing <- completed_course %>%
   select(format_type, gpa) %>%
   group_by(format_type) %>%
   filter(is.na(gpa)) %>%
   count(format_type)
 
+#write.csv(gpa_missing, "gpa_missing.csv") 
 
 # check missingness of final grade (DV): 
 # no missing grades; DV accounted for. 
@@ -95,6 +104,71 @@ completed_course %>%
 # filter data set for only those that completed the course 
 completed <- learning %>%
   filter(!falsexam == 0 & !is.na(gpa)) 
+
+
+```
+
+
+Univariate graphical plots 
+
+```{r Univariate-Plots}
+
+# boxplot 
+ggplot(data = completed_course, 
+       aes(format_type, course_grade, fill = format_type)) + 
+  geom_boxplot() + coord_flip() + ylab(label = "Final Grade") + 
+  xlab("Class Format")+ labs(fill = "Class Format") +
+  scale_x_discrete(labels=c("Traditional", "Online", "Hybrid")) 
+
+
+ggplot(data = completed_course, 
+       aes(course_grade, fill = format_type)) + geom_histogram()
+
+# final grades by group histogram 
+ggplot(data = completed_course, aes(x = course_grade)) +
+  geom_histogram(fill = "white", colour = "black") +
+  facet_grid(format_type ~ .) + xlab("Final Grade") + 
+  ylab("Count")
+
+
+# GPA by group 
+ggplot(data = completed_course, aes(x = gpa)) +
+  geom_histogram(fill = "white", colour = "black") +
+  facet_grid(format_type ~ .) + xlab("GPA") + 
+  ylab("Count") + stat_bin(bins = 8) 
+
+# GPA distributions by group 
+
+ggplot(data = completed_course, aes(x = gpa, y = format_type)) + 
+  geom_joy(scale = 0.9) + 
+  theme_joy() + scale_y_discrete(labels=c("Hybrid", "Online", "Traditional")) + 
+  theme(legend.position = "none") + xlab("Student GPA") + ylab("Group") 
+
+
+# QQ plot of grades to test normality assumption:
+
+lm1 <- lm(course_grade ~ format_type, data = completed_course)
+qqPlot(lm1)
+
+
+```
+
+
+```{r Descriptive-Statistics}
+
+# final grade & GPA descriptive stats by group 
+grade_desc <- describeBy(completed_course$course_grade, 
+                         completed_course$format_type, mat = TRUE) 
+gpa_desc <- describeBy(completed_course$gpa, 
+           completed_course$format_type, mat = TRUE) 
+
+#write.csv(grade_desc, "grade_descriptives.csv") 
+#write.csv(gpa_desc, "gpa_descriptives.csv") 
+
+```
+
+
+
 
 
 ```
