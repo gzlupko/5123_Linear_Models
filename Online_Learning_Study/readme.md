@@ -1,9 +1,10 @@
-This folder contains materials used for a replication study of Alpert et al. (2016)'s A Randomized Assessment of Online Learning. 
+This folder contains materials used for a replication study of Alpert et al. (2016)'s _A Randomized Assessment of Online Learning_. 
 
 ## Table of Contents 
 * [Project Overview](#Project-Overview) 
 * [Sample Data Visualizations](#Sample-Visualizations)
 * [Sample Data Tables](#Sample-Data-Tables)
+* [Results](#Results)
 
 
 
@@ -28,9 +29,18 @@ Data visualizations associated with this project can be found in the Project_Vis
 
 
 
-#### "Historgrams of Final Grade by Group
+#### Historgrams of Final Grade by Group
 ![alt text](https://github.com/gzlupko/5123_Linear_Models/blob/main/Online_Learning_Study/project_visualizations/course_grade_histogram.jpeg)
 
 
 ### Sample Data Tables
+
+#### Descriptive Statistics for Final Grade by Group
+![alt text](https://github.com/gzlupko/5123_Linear_Models/blob/main/Online_Learning_Study/data/final_grade_descriptives.png)
+
+
+
+
+
+### Results
 
