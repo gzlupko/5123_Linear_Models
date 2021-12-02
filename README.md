@@ -21,6 +21,7 @@ Below are the list topics covered. See lab_code folder for corresponding R code:
 * Lab 2: Measures of Effect, Association, and Assumptions for ANOVA
 * Lab 3: Pairwise and Complex Contrasts in One-Way ANOVA
 * Lab 4: Planned Pairwise Comparisons and Corrections for Type I Error Rate
+* Lab 13: One-way Mixed Effects Repeated Measures 
 
 ### Sample Data Visualizations
 
@@ -117,6 +118,47 @@ pairs(x = emm1,
       adjust = "Tukey")              
                 
 
+```
+
+
+
+
+##### Mixed Effects Models & Repeated Measures  
+
+
+Within-subjects, repeated measures designs often use wide data formats, especially for calculating variance-covariance and correlations.
+```
+dat
+library(tidyverse)
+# Add an id number
+(dat_long <- dat %>% mutate(id = row_number()) %>% relocate(id))
+# Transform to long format
+dat_long <- 
+  dat_long %>% pivot_longer(cols = Day1:Day4, # ?tidyr_tidy_select
+                            names_to = "Day", # name of the new factor
+                            names_prefix = "Day", # characters to drop from levels
+                            values_to = "Weight") # name of the stacked variable
+dat_long
+print(dat_long, n = Inf)
+
+# Now transform back to wide format.
+dat_wide <- dat_long %>% pivot_wider(id_cols = id,
+                                     names_from = "Day",
+                                     names_prefix = "Day",
+                                     values_from = "Weight")
+dat_wide              
+```
+
+
+
+
+The packages and code below can be run for a mixed effects framework.
+```
+library(lme4)
+library(lmerTest)
+#random intercept model; we fit a random intercept model based on subject id 
+lmer1 <- lmer(Weight ~ Day + (1|id), data = dat_long) 
+anova(lmer1)                
 ```
 
 
