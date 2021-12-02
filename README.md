@@ -16,7 +16,7 @@ This course provides an overview of experimental design and analysis from the pe
 the general linear modeling framework. Topics include theory of experimental design, single and multiple factor experiments, between-subject and within-subject designs, factorial and nested designs, random effects, analysis of covariance, and blocking. 
 
 ### Labs 
-Below are the list of lab assignments and topics covered
+Below are the list topics covered. See lab_code folder for corresponding R code:
 * Lab 1: Analysis of Variance (ANOVA) using GLM Framework 
 * Lab 2: Measures of Effect, Association, and Assumptions for ANOVA
 * Lab 3: Pairwise and Complex Contrasts in One-Way ANOVA
