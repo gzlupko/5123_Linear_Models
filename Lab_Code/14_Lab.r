@@ -1,4 +1,5 @@
 library(AMCP)
+library(tidyverse) 
 
 # The one-way within-subjects design
 data(C11T5)
@@ -7,12 +8,22 @@ dat1 <- C11T5
 # Note the data are in wide format. Good for estimating
 # the var/cov matrix.
 round(var(dat1), 0)
-round(cor(dat1), 2)
+round(cor(dat1), 2) 
+
+
+# add id column with mutate() 
+dat1 <- dat1 %>%
+  mutate(id = row_number()) %>%
+  relocate(id)
+
 
 # Convert to long for plotting
 # Convert to long format for an interaction plot
-dat1_l <- # use pivot_longer for this
-dat1_l
+dat1_l <- dat1 %>%
+  pivot_longer(cols = -id, 
+               names_to = "Months", 
+               names_prefix = "Months", 
+               values_to = "Score")  
 
 # Convert Months to a factor
 dat1_l$Months <- factor(dat1_l$Months)
@@ -20,23 +31,37 @@ dat1_l$Months <- factor(dat1_l$Months)
 # Plot
 boxplot(Score ~ Months, data = dat1_l)
 
+dat1_l %>%
+  ggplot(aes(x = Months, y = Score)) + geom_boxplot()
+
 # Group means
 tapply(X = dat1_l$Score, INDEX = dat1_l$Months, FUN = mean)
 
+dat1_l %>% 
+  group_by(Months) %>%
+  summarize(mean(Score)) 
+
+
 # Fit the multivariate model
-mvm1 <- lm(as.matrix(dat1) ~ 1, data = dat1) 
+# here we only have a one factor design
+# we use the wide format data here; we put in long format to graph them but not needed in long here for lm() 
+mvm1 <- lm(as.matrix(dat1[, -1]) ~ 1, data = dat1) 
 library(car)
+# capital 'A' Anova() function in car library is used for... 
 wsd1 <- Anova(mod = mvm1, 
               idata = data.frame(Months = factor(c(30,36,42,48))), 
               idesign = ~ Months, 
               type = 3)
 summary(wsd1, multivariate = FALSE) # multivariate = F gets us epsilon corrections
+# sig and small p-value for Mauchly test suggests that spherecity is not satisified 
+# so therefore we should rely on the Greenhouse-Geisser correction; and the results suggest no longer sig
+
 
 # Follow-up with a contrast test for a linear trend
 psi1 <- c(-3/4, -1/4, 1/4, 3/4)
 
 # Apply the contrast to each row of repeated-measures data
-(psi_vals <- as.matrix(dat1) %*% psi1) 
+(psi_vals <- as.matrix(dat1[ ,-1]) %*% psi1) 
 (psi_bar <- mean(psi_vals))
 (s_psi_bar <- sd(psi_vals)/sqrt(12))
 (t_psi_test <- psi_bar / s_psi_bar)
@@ -46,11 +71,11 @@ psi1 <- c(-3/4, -1/4, 1/4, 3/4)
 # Split-plot design #
 #####################
 # The split-plot design has one factor that is within-subjects
-# and one that is between-subjects.
+# and one that is between-subject; we have subjects over (within) and age groups (between)
 data(C12T15)
 dat_old <- C12T15
 dat_old
-
+# we are going to combine the data frames as the authors have yet to 
 data(C12T7)
 dat_young <- C12T7
 dat_young
@@ -67,6 +92,8 @@ dat3
 
 # Add an id variable
 dat3 <- dat3 %>% mutate(id = row_number()) %>% relocate(id)
+
+write_csv(x = dat3, path = "/Users/gianzlupko/Desktop/dat3.csv")  
 
 # Convert to long format for an interaction plot
 dat3_l <- dat3 %>% pivot_longer(cols = -c(id, Age),
@@ -103,6 +130,7 @@ interaction.plot(x.factor = dat3_l$Angle,
 
 # Run the multivariate regression model, but now regress
 # the repeated-measures outcomes on the B-S factor, Age.
+# turn the DVs into a matrix so that it can be used in lm() 
 mvm10 <- lm(as.matrix(dat3[,3:5]) ~ Age, data = dat3) 
 library(car)
 wsd10 <- Anova(mod = mvm10, 
@@ -123,7 +151,7 @@ summary(wsd10, multivariate = FALSE) # multivariate = F gets us epsilon correcti
 # the two-levels of Age)
 
 # Testing the Angle effect at Age = young
-mvm11 <- lm(as.matrix(dat3[1:10, 2:4]) ~ 1) 
+mvm11 <- lm(as.matrix(dat3[1:10, 3:5]) ~ 1) 
 wsd11 <- Anova(mod = mvm11, 
                idata = data.frame(Angle = factor(c(0,4,8))), 
                idesign = ~ Angle, 
@@ -131,7 +159,7 @@ wsd11 <- Anova(mod = mvm11,
 summary(wsd11, multivariate = FALSE) # multivariate = F gets us epsilon corrections
 
 # Testing the Angle effect at Age = old
-mvm12 <- lm(as.matrix(dat3[11:20, 2:4]) ~ 1) 
+mvm12 <- lm(as.matrix(dat3[11:20, 3:5]) ~ 1) 
 wsd12 <- Anova(mod = mvm12, 
                idata = data.frame(Angle = factor(c(0,4,8))), 
                idesign = ~ Angle, 
@@ -142,12 +170,19 @@ summary(wsd12, multivariate = FALSE) # multivariate = F gets us epsilon correcti
 # Suppose I want to test avg of angle 0 and angle 4 means vs 
 # angle 8 mean (at the Age = young or old level of age).
 psi_test <- c(-1/2, -1/2, 1) 
-(psi_test_10 <- as.matrix(dat3[11:20, 2:4]) %*% psi_test) # old group
+(psi_test_10 <- as.matrix(dat3[11:20, 3:5]) %*% psi_test) # old group
 (t_psi_test <- mean(psi_test_10) / (sd(psi_test_10)/ sqrt(10)))
 2 * pt(q = abs(t_psi_test), df = 9, lower.tail = FALSE)
 
 # also follow up with young level... 
 # Could also do pairwise comparisons or whatever...
+
+psi2 <- c(-1, 1, 0)
+psi3 <- c(-1, 0, 1) 
+psi4 
+
+# Holm-Bonferroni correction 
+
 
 # Between-subjects effects at each level of the
 # W-S factor (i.e., testing the Age effect at 
