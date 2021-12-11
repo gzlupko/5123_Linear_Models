@@ -54,6 +54,15 @@ Normal Q-Q Plot
 ![alt text](https://github.com/gzlupko/5123_Linear_Models/blob/main/Visualizations/interaction_different_slopes.jpeg)
 
 
+
+**Split Plot Design Boxplot with within (angles) and between (age group) factors**
+
+
+![alt text](https://github.com/gzlupko/5123_Linear_Models/blob/main/Visualizations/split_plot_design_box.jpeg)
+
+
+
+
 ### Useful Code 
 
 ##### Common Functions and Tasks 
