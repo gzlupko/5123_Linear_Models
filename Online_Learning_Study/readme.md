@@ -4,6 +4,7 @@ This folder contains materials used for a replication study of Alpert et al. (20
 * [Project Overview](#Project-Overview) 
 * [Sample Data Visualizations](#Sample-Visualizations)
 * [Sample Data Tables](#Sample-Data-Tables)
+* [Analysis of Misisng Data](#Missing-Data)
 * [Results](#Results)
 
 
@@ -40,6 +41,8 @@ Data visualizations associated with this project can be found in the Project_Vis
 
 
 
+
+### Missing Data
 
 
 ### Results
