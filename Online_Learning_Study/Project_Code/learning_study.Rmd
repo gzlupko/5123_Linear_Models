@@ -15,7 +15,7 @@ setwd("/Users/gianzlupko/Desktop/5123 Linear Models/5123_Linear_Models/Online_Le
 ```
 
 Import data and view fields
-```{r Import-Data}
+```{r Import-Data, include = FALSE}
 learning <- read_dta("online_assessment.dta") 
 head(learning) 
 ```
@@ -29,7 +29,6 @@ learn2 <- learning %>%
   rename(course_grade = falsexam) 
 
 # create column that stores character string identifying course type: 
-learn2
 learn2 <- learn2 %>%
   mutate(format_type = 
            ifelse(format_ol == 1, "online", 
@@ -39,12 +38,10 @@ learn2 <- learn2 %>%
 
 
 # store format type as factor: 
-class(learn2$format_type) 
 learn2$format_type <- as.factor(learn2$format_type) 
 levels(learn2$format_type) 
 
 ```
-
 
 
 A review of missing data
@@ -71,6 +68,13 @@ online_attrition/172
 completed_course <- learn2 %>%
   filter(enroll_count == 3) 
 
+# count n-size for course completion across experimental conditions 
+
+completed_course %>%
+  group_by(format_type) %>% 
+  count(format_type) 
+
+
 # check missigness of GPA (covariate): 
 # for those that completed coourse, 48 GPA records missing total
 gpa_missing <- completed_course %>%
@@ -79,34 +83,53 @@ gpa_missing <- completed_course %>%
   filter(is.na(gpa)) %>%
   count(format_type)
 
-#write.csv(gpa_missing, "gpa_missing.csv") 
+# filter data set for subset with complete prior GPA records 
+completed <- completed_course %>% 
+  filter(!is.na(gpa)) 
 
-# check missingness of final grade (DV): 
-# no missing grades; DV accounted for. 
 
-completed_course %>%
-  select(format_type, course_grade) %>%
-  group_by(format_type)
 
+```
+
+
+
+Assumptions for ANOVA
+
+```{r}
+
+# constant variance - Maxwell et al. (2017)'s variance ratio: 
+# step 1: calculate variance by group
+
+completed %>%
+  group_by(format_type) %>%
+  summarise(variance = var(course_grade))
+completed %>%
+  group_by(format_type) %>%
+  count(format_type)
   
-  
+maxwell_ratio <- (96*229.705) / (85*79.31)
+maxwell_ration <- ()
+maxwell_ratio
+(maxwell_ratio < 4) 
+# true; variance ratio is less than 4, so we have evidence for constant variance
+
+# next, conduct Levene's test of homogeneity of variance 
+lm1 <- lm(course_grade ~ format_type, data = completed) 
+library(car)
+leveneTest(lm1)
+
+
+# test assumption of normality with QQ-Plot 
+qqPlot(lm1)
+
+# test assumption of normality with histograms or distribution plots 
+
 
 ```
 
 
 
 
-
-
-
-```{r Data-Cleaning2}
-
-# filter data set for only those that completed the course 
-completed <- learning %>%
-  filter(!falsexam == 0 & !is.na(gpa)) 
-
-
-```
 
 
 Univariate graphical plots 
@@ -171,13 +194,11 @@ gpa_desc <- describeBy(completed_course$gpa,
 
 
 
-```
-
-
 Test for covariate suitability 
 
 Is GPA an appropriate covariate to be used in ANCOVA? 
-```{r Covariate-Test}
+
+```{r}
 
 cor(completed$gpa, completed$falsexam)
 
@@ -186,9 +207,7 @@ lm(falsexam ~ gpa, data = completed) %>%
 
 ggplot(data = completed, aes(x = gpa, y = falsexam)) + geom_point() 
 
-# test commit 
 ```
-
 
 
 
