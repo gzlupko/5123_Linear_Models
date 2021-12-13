@@ -11,6 +11,7 @@ library(haven)
 library(psych) 
 library(ggridges) 
 library(car)
+library(apaTables) 
 setwd("/Users/gianzlupko/Desktop/5123 Linear Models/5123_Linear_Models/Online_Learning_Study")   
 ```
 
@@ -118,11 +119,34 @@ lm1 <- lm(course_grade ~ format_type, data = completed)
 library(car)
 leveneTest(lm1)
 
+# visualize group variances with boxplot 
+ggplot(data = completed, 
+       aes(format_type, course_grade, fill = format_type)) + 
+  geom_boxplot() + coord_flip() + ylab(label = "Final Course Grade") + 
+  xlab("Instructional Format")+ labs(fill = "Class Format") +  
+  theme(legend.position = "none")
+
 
 # test assumption of normality with QQ-Plot 
 qqPlot(lm1)
 
+# outliers in data set 
+completed %>%
+  select(course_grade) %>%
+  arrange(course_grade)
+
 # test assumption of normality with histograms or distribution plots 
+
+ggplot(data = completed, aes(x = course_grade)) +
+  geom_histogram(fill = "white", colour = "black") +
+  facet_grid(format_type ~ .) + xlab("Final Course Grade") + 
+  ylab("Count")
+
+# distribution plots for final course grade by instructional format 
+ggplot(data = completed, aes(x = course_grade, y = format_type)) + 
+  geom_joy(scale = 0.9) + 
+  theme_joy() + scale_y_discrete(labels=c("Hybrid", "Online", "Traditional")) + 
+  theme(legend.position = "none") + xlab("Student GPA") + ylab("Group") 
 
 
 ```
@@ -162,10 +186,12 @@ ggplot(data = completed_course, aes(x = gpa)) +
 
 # GPA distributions by group 
 
-ggplot(data = completed_course, aes(x = gpa, y = format_type)) + 
+ggplot(data = completed, aes(x = course_grade, y = format_type)) + 
   geom_joy(scale = 0.9) + 
   theme_joy() + scale_y_discrete(labels=c("Hybrid", "Online", "Traditional")) + 
-  theme(legend.position = "none") + xlab("Student GPA") + ylab("Group") 
+  scale_x_continuous(breaks = seq(min(completed$course_grade), max(completed$course_grade), by = 10)) + 
+  theme(legend.position = "none") + 
+  xlab("Final Course Grade") + ylab("Instructional Format") 
 
 
 # QQ plot of grades to test normality assumption:
@@ -175,6 +201,46 @@ qqPlot(lm1)
 
 
 ```
+
+
+```{r one-way-ANOVA}
+
+# one-way ANOVA
+lm1 <- lm(course_grade ~ format_type, data = completed) 
+
+lm1 %>%
+  summary() 
+
+# The ANOVA Source Table
+apa.aov.table(lm1, filename = "ANOVA_APA.rtf", table.number = 2)
+
+```
+
+
+Assumptions for covariate
+
+```{r covariate-assumptions}
+
+# 1. demonstrate strong correlation b/w covariate and outcome 
+lm(course_grade ~ gpa, data = completed) %>%
+  summary() 
+
+print(c("Correlation between course grade and gpa is", 
+        sqrt(.1522)), sep = "")
+
+# scatterplot indicating linear relationship 
+plot(x = completed$course_grade, y = completed$gpa) 
+
+# 2. covariate balance 
+
+
+
+# 3. treatment by covariate interaction 
+
+```
+
+
+
 
 
 ```{r Descriptive-Statistics}
