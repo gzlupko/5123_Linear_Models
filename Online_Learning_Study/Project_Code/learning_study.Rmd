@@ -93,6 +93,39 @@ completed <- completed_course %>%
 ```
 
 
+Check outliers 
+
+```{r outliers}
+
+# identify course outliers 
+completed %>%
+  select(course_grade, format_type) %>%
+  filter(course_grade < 50)
+
+# there are two final grades of zero recorded in the online sample 
+# this may be a data quality issue; perhaps these students actually dropped the class 
+
+# below, will perform a statistical test of outlier 
+# Grubbs test is a statistical test for outliers that tests the null hypothesis that 
+# the highest/lowest (in this case lowest) value is not an outlier 
+library(outliers)
+test <- grubbs.test(completed$course_grade) 
+test
+
+# test is significant for the two values in the online format that received a zero
+# will remove them and test again to see if the score of 48 in the hybrid format is an outlier 
+
+completed <- completed %>%
+   filter(course_grade > 0) 
+
+test1 <- grubbs.test(completed$course_grade) 
+test1
+# Grubbs test finds that p-value is not signficant so the score of 48 is not an outlier
+
+```
+
+
+
 
 Assumptions for ANOVA
 
@@ -247,6 +280,15 @@ lm_cov_interaction <- lm(course_grade ~ format_type + gpa + gpa:course_grade,
                          data = completed)
 
 summary(lm_cov_interaction) 
+
+# plot treatment by covariate interaction
+
+
+completed %>%
+  ggplot(aes(x = gpa, y = course_grade, color = format_type)) + 
+  geom_point() + geom_smooth(method = "lm", se = FALSE) + 
+  scale_y_continuous(limits = c(30, 100)) + 
+   xlab("GPA") + ylab("Final Course Grade") 
 
 ```
 
