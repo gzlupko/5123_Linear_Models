@@ -12,6 +12,7 @@ library(psych)
 library(ggridges) 
 library(car)
 library(apaTables) 
+library(emmeans) 
 setwd("/Users/gianzlupko/Desktop/5123 Linear Models/5123_Linear_Models/Online_Learning_Study")   
 ```
 
@@ -255,9 +256,8 @@ Assumptions for covariate
 
 # 1. demonstrate strong correlation b/w covariate and outcome 
 # and that they are significantly related 
-lm(course_grade ~ gpa, data = completed) %>%
-  summary() 
-
+lm_cov <- lm(course_grade ~ gpa, data = completed)
+summary(lm_cov) 
 
 # Next, ensure that the cov-outcome relationship is linear 
 # To do so, visually inspect a scatterplot and confirm whether it indicates a linear relationship 
@@ -265,22 +265,40 @@ lm(course_grade ~ gpa, data = completed) %>%
 # zooming in on a more limited view allows us to more closely visually inspect that relationship is linear 
 plot(x = completed$course_grade, y = completed$gpa)
 ggplot(data = completed, aes(x = course_grade, y = gpa)) + geom_point() + 
-  scale_x_continuous(limits = c(50, 100))  
+  scale_x_continuous(limits = c(50, 100)) + xlab("Course Grade") + ylab("Prior GPA")
 
 # 2. covariate balance 
 
+ggplot(data = completed, 
+       aes(format_type, gpa, fill = format_type)) + 
+  geom_boxplot() + coord_flip() + ylab(label = "Prior GPA") + 
+  xlab("Class Format")+ labs(fill = "Class Format") +theme(legend.position = "none") 
 
+# show variance for prior GPA across groups and use Maxwell et al. (2017) formula 
+
+completed %>%
+  group_by(format_type) %>%
+  count(format_type) 
+
+completed %>%
+  group_by(format_type) %>%
+  summarise(variance = var(gpa)) 
+
+
+maxwell_ratio <- (96*.346) / (83*.251)
+maxwell_ratio
+(maxwell_ratio < 4) 
 
 # 3. treatment by covariate interaction 
 # ANCOVA also assumes no treatment by covariate interaction 
 # to test for this, add an interaction term to regression model 
 # ensure that interaction is not significant (e.g. constant effect of gpa for all values of course grade)
 
-lm_cov_interaction <- lm(course_grade ~ format_type + gpa + gpa:course_grade, 
+lm_cov_interaction <- lm(course_grade ~ format_type + gpa + gpa:format_type, 
                          data = completed)
 
 summary(lm_cov_interaction) 
-
+apa.aov.table(lm_cov_interaction, filename = "ANCOVA_Interaction_APA.rtf", table.number = 2)
 # plot treatment by covariate interaction
 
 
@@ -292,6 +310,61 @@ completed %>%
 
 ```
 
+
+
+Final ANCOVA Model 
+All assumptions for covariate inclusion were satisfied 
+
+```{r final-ANCOVA}
+
+lm_cov_2 <- lm(course_grade ~ format_type + gpa, 
+               data = completed) 
+
+summary(lm_cov_2) 
+
+apa.aov.table(lm_cov_2, filename = "Final_ANCOVA_Table.rtf") 
+
+
+```
+
+
+
+Pairswise constrasts for adjusted group means 
+
+```{r}
+
+
+
+emm1 <- emmeans(object = lm_cov_2,
+                specs = ~ format_type)
+emm1
+
+# shows adjusted group means with avg. GPA per group 
+emm2 <- emmeans(object = lm_cov_2,
+                specs = ~ format_type + gpa)
+emm2
+
+pairs(emm1) 
+
+
+grid1 <- ref_grid(object = lm_cov_2, 
+                  at = list(GPA = 2))
+summary(grid1)
+mean(completed$course_grade) 
+pairs(grid1)
+
+# plot showing differences between instructional format and course grade while controlling for GPA
+# notice, plot shows that students assigned to the traditional instruction performed, on average, the best 
+p <- ggplot(data = completed, (aes(x=gpa, y=course_grade, color= format_type))) + 
+  theme_classic() +ylab("Final Course Grade") + xlab("GPA") +
+  labs(color= "Group")   
+
+p + geom_point() + geom_smooth(method=lm, se=FALSE, fullrange=TRUE)
+
+p + geom_point() + geom_smooth(method = lm, se = FALSE) 
+
+
+```
 
 
 
