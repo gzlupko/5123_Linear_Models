@@ -109,7 +109,6 @@ completed %>%
   count(format_type)
   
 maxwell_ratio <- (96*229.705) / (85*79.31)
-maxwell_ration <- ()
 maxwell_ratio
 (maxwell_ratio < 4) 
 # true; variance ratio is less than 4, so we have evidence for constant variance
@@ -144,9 +143,9 @@ ggplot(data = completed, aes(x = course_grade)) +
 
 # distribution plots for final course grade by instructional format 
 ggplot(data = completed, aes(x = course_grade, y = format_type)) + 
-  geom_joy(scale = 0.9) + 
+  geom_density_ridges(scale = 0.9) + scale_x_continuous(limits = c(1,100), n.breaks = 10) + 
   theme_joy() + scale_y_discrete(labels=c("Hybrid", "Online", "Traditional")) + 
-  theme(legend.position = "none") + xlab("Student GPA") + ylab("Group") 
+  theme(legend.position = "none") + xlab("Final Course Grade") + ylab("Group")
 
 
 ```
@@ -222,20 +221,32 @@ Assumptions for covariate
 ```{r covariate-assumptions}
 
 # 1. demonstrate strong correlation b/w covariate and outcome 
+# and that they are significantly related 
 lm(course_grade ~ gpa, data = completed) %>%
   summary() 
 
-print(c("Correlation between course grade and gpa is", 
-        sqrt(.1522)), sep = "")
 
-# scatterplot indicating linear relationship 
-plot(x = completed$course_grade, y = completed$gpa) 
+# Next, ensure that the cov-outcome relationship is linear 
+# To do so, visually inspect a scatterplot and confirm whether it indicates a linear relationship 
+# using a limited view of x-axis; there were a few extreme outliers
+# zooming in on a more limited view allows us to more closely visually inspect that relationship is linear 
+plot(x = completed$course_grade, y = completed$gpa)
+ggplot(data = completed, aes(x = course_grade, y = gpa)) + geom_point() + 
+  scale_x_continuous(limits = c(50, 100))  
 
 # 2. covariate balance 
 
 
 
 # 3. treatment by covariate interaction 
+# ANCOVA also assumes no treatment by covariate interaction 
+# to test for this, add an interaction term to regression model 
+# ensure that interaction is not significant (e.g. constant effect of gpa for all values of course grade)
+
+lm_cov_interaction <- lm(course_grade ~ format_type + gpa + gpa:course_grade, 
+                         data = completed)
+
+summary(lm_cov_interaction) 
 
 ```
 
@@ -265,7 +276,7 @@ Test for covariate suitability
 Is GPA an appropriate covariate to be used in ANCOVA? 
 
 ```{r}
-
+# first, assess whether relationship between covariate and DV is strong (r greater than .3)
 cor(completed$gpa, completed$falsexam)
 
 lm(falsexam ~ gpa, data = completed) %>%
