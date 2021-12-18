@@ -322,7 +322,8 @@ lm_cov_2 <- lm(course_grade ~ format_type + gpa,
 
 summary(lm_cov_2) 
 
-apa.aov.table(lm_cov_2, filename = "Final_ANCOVA_Table.rtf") 
+# expport ANCOVA table in APA format to local 
+#apa.aov.table(lm_cov_2, filename = "Final_ANCOVA_Table.rtf") 
 
 
 ```
