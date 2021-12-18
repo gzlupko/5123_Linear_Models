@@ -1,11 +1,12 @@
 ---
-title: "learning_type_study"
+title: "Data Analysis Project"
 author: "Gian Zlupko"
-date: "11/11/2021"
+date: "12/20/21"
 output: html_document
 ---
 
 ```{r Setup, include=FALSE}
+# load libraries and set path 
 library(tidyverse) 
 library(haven) 
 library(psych) 
@@ -26,7 +27,6 @@ head(learning)
 ```{r Data-Cleaning}
 
 # rename columns
-
 learn2 <- learning %>%
   rename(course_grade = falsexam) 
 
@@ -38,15 +38,14 @@ learn2 <- learn2 %>%
                          ifelse(format_ol == 0 & format_blended == 0, 
                                 "traditional", "NA")))) 
 
-
 # store format type as factor: 
 learn2$format_type <- as.factor(learn2$format_type) 
-levels(learn2$format_type) 
 
 ```
 
 
-A review of missing data
+Review of Missing Data
+The following code chunk calculates descriptive statistics regarding missingness of data that are presented in Appendix B
 ```{r Missing-Data}
 
 # attrition by instructional mode: 
@@ -71,7 +70,6 @@ completed_course <- learn2 %>%
   filter(enroll_count == 3) 
 
 # count n-size for course completion across experimental conditions 
-
 completed_course %>%
   group_by(format_type) %>% 
   count(format_type) 
@@ -90,13 +88,12 @@ completed <- completed_course %>%
   filter(!is.na(gpa)) 
 
 
-
 ```
 
 
-Check outliers 
+Check Outliers 
 
-```{r outliers}
+```{r outliers, warning = F}
 
 # identify course outliers 
 completed %>%
@@ -130,15 +127,15 @@ test1
 
 Assumptions for ANOVA
 
-```{r}
+```{r ANOVA-Assumptions-Check}
 
 # constant variance - Maxwell et al. (2017)'s variance ratio: 
 # step 1: calculate variance by group
 
-completed %>%
+group_variance <- completed %>%
   group_by(format_type) %>%
   summarise(variance = var(course_grade))
-completed %>%
+group_n <- completed %>%
   group_by(format_type) %>%
   count(format_type)
   
@@ -175,21 +172,13 @@ ggplot(data = completed, aes(x = course_grade)) +
   facet_grid(format_type ~ .) + xlab("Final Course Grade") + 
   ylab("Count")
 
-# distribution plots for final course grade by instructional format 
-ggplot(data = completed, aes(x = course_grade, y = format_type)) + 
-  geom_density_ridges(scale = 0.9) + scale_x_continuous(limits = c(1,100), n.breaks = 10) + 
-  theme_joy() + scale_y_discrete(labels=c("Hybrid", "Online", "Traditional")) + 
-  theme(legend.position = "none") + xlab("Final Course Grade") + ylab("Group")
-
 
 ```
 
 
+Univariate Graphical Plots
 
-
-
-
-Univariate graphical plots 
+The folowing code chunk generated a series of plots that were used to look at variable distributions, primarily at the project proposal stage. 
 
 ```{r Univariate-Plots}
 
@@ -217,16 +206,6 @@ ggplot(data = completed_course, aes(x = gpa)) +
   facet_grid(format_type ~ .) + xlab("GPA") + 
   ylab("Count") + stat_bin(bins = 8) 
 
-# GPA distributions by group 
-
-ggplot(data = completed, aes(x = course_grade, y = format_type)) + 
-  geom_joy(scale = 0.9) + 
-  theme_joy() + scale_y_discrete(labels=c("Hybrid", "Online", "Traditional")) + 
-  scale_x_continuous(breaks = seq(min(completed$course_grade), max(completed$course_grade), by = 10)) + 
-  theme(legend.position = "none") + 
-  xlab("Final Course Grade") + ylab("Instructional Format") 
-
-
 # QQ plot of grades to test normality assumption:
 
 lm1 <- lm(course_grade ~ format_type, data = completed_course)
@@ -235,6 +214,7 @@ qqPlot(lm1)
 
 ```
 
+One-way ANOVA 
 
 ```{r one-way-ANOVA}
 
@@ -244,8 +224,8 @@ lm1 <- lm(course_grade ~ format_type, data = completed)
 lm1 %>%
   summary() 
 
-# The ANOVA Source Table
-apa.aov.table(lm1, filename = "ANOVA_APA.rtf", table.number = 2)
+# The ANOVA Source Table - write to file on local in APA format 
+#apa.aov.table(lm1, filename = "ANOVA_APA.rtf", table.number = 2)
 
 ```
 
@@ -332,27 +312,21 @@ summary(lm_cov_2)
 
 Pairswise constrasts for adjusted group means 
 
-```{r}
+```{r pairwise-contrasts}
 
-
-
+# Calculate ajusted group means conditioned on prior GPA for each group  
 emm1 <- emmeans(object = lm_cov_2,
                 specs = ~ format_type)
 emm1
 
-# shows adjusted group means with avg. GPA per group 
+# the below code shows the same results as the first contrast but in the emmeans() function the GPA covariate is explicitly listed for documentation/presentation's sake 
 emm2 <- emmeans(object = lm_cov_2,
                 specs = ~ format_type + gpa)
 emm2
 
+# Calculate pairwise constrast to test for differences between adjusted group means
+# Use Tukey adjustment to control for Type I familywise error rate 
 pairs(emm1) 
-
-
-grid1 <- ref_grid(object = lm_cov_2, 
-                  at = list(GPA = 2))
-summary(grid1)
-mean(completed$course_grade) 
-pairs(grid1)
 
 # plot showing differences between instructional format and course grade while controlling for GPA
 # notice, plot shows that students assigned to the traditional instruction performed, on average, the best 
@@ -366,42 +340,4 @@ p + geom_point() + geom_smooth(method = lm, se = FALSE)
 
 
 ```
-
-
-
-
-```{r Descriptive-Statistics}
-
-# final grade & GPA descriptive stats by group 
-grade_desc <- describeBy(completed_course$course_grade, 
-                         completed_course$format_type, mat = TRUE) 
-gpa_desc <- describeBy(completed_course$gpa, 
-           completed_course$format_type, mat = TRUE) 
-
-#write.csv(grade_desc, "grade_descriptives.csv") 
-#write.csv(gpa_desc, "gpa_descriptives.csv") 
-
-```
-
-
-
-
-
-Test for covariate suitability 
-
-Is GPA an appropriate covariate to be used in ANCOVA? 
-
-```{r}
-# first, assess whether relationship between covariate and DV is strong (r greater than .3)
-cor(completed$gpa, completed$falsexam)
-
-lm(falsexam ~ gpa, data = completed) %>%
-  summary()
-
-ggplot(data = completed, aes(x = gpa, y = falsexam)) + geom_point() 
-
-```
-
-
-
 
